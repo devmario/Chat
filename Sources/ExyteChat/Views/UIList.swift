@@ -568,25 +568,29 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
 
             let row = sections[indexPath.section].rows[indexPath.row]
             tableViewCell.contentConfiguration = UIHostingConfiguration {
-                ChatMessageView(
-                    viewModel: viewModel, messageBuilder: messageBuilder, row: row, chatType: type,
-                    avatarSize: avatarSize, tapAvatarClosure: tapAvatarClosure,
-                    messageStyler: messageStyler, isDisplayingMessageMenu: false,
-                    showMessageTimeView: showMessageTimeView,
-                    messageLinkPreviewLimit: messageLinkPreviewLimit, messageFont: messageFont
-                )
-                .transition(.scale)
-                .background(MessageMenuPreferenceViewSetter(id: row.id))
-                .rotationEffect(Angle(degrees: (type == .conversation ? 180 : 0)))
-                .applyIf(showMessageMenuOnLongPress) {
-                    $0.simultaneousGesture(
-                        TapGesture().onEnded { } // add empty tap to prevent iOS17 scroll breaking bug (drag on cells stops working)
+                if row.message.isLoading {
+                    Circle()
+                } else {
+                    ChatMessageView(
+                        viewModel: viewModel, messageBuilder: messageBuilder, row: row, chatType: type,
+                        avatarSize: avatarSize, tapAvatarClosure: tapAvatarClosure,
+                        messageStyler: messageStyler, isDisplayingMessageMenu: false,
+                        showMessageTimeView: showMessageTimeView,
+                        messageLinkPreviewLimit: messageLinkPreviewLimit, messageFont: messageFont
                     )
-                    .onLongPressGesture {
-                        // Trigger haptic feedback
-                        self.impactGenerator.impactOccurred()
-                        // Launch the message menu
-                        self.viewModel.messageMenuRow = row
+                    .transition(.scale)
+                    .background(MessageMenuPreferenceViewSetter(id: row.id))
+                    .rotationEffect(Angle(degrees: (type == .conversation ? 180 : 0)))
+                    .applyIf(showMessageMenuOnLongPress) {
+                        $0.simultaneousGesture(
+                            TapGesture().onEnded { } // add empty tap to prevent iOS17 scroll breaking bug (drag on cells stops working)
+                        )
+                        .onLongPressGesture {
+                            // Trigger haptic feedback
+                            self.impactGenerator.impactOccurred()
+                            // Launch the message menu
+                            self.viewModel.messageMenuRow = row
+                        }
                     }
                 }
             }

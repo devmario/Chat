@@ -43,6 +43,8 @@ public struct Message: Identifiable, Hashable, Sendable {
             }
         }
     }
+    
+    public var isLoading = false
 
     public var id: String
     public var user: User
