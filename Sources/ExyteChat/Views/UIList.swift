@@ -65,7 +65,7 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
         tableView.scrollsToTop = false
         tableView.isScrollEnabled = isScrollEnabled
         
-        tableView.contentInset = UIEdgeInsets(top: emptySpaceAtBottom, left: 0, bottom: 0, right: 0)
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: emptySpaceAtBottom, right: 0)
 
         NotificationCenter.default.addObserver(forName: .onScrollToBottom, object: nil, queue: nil) { _ in
             DispatchQueue.main.async {
