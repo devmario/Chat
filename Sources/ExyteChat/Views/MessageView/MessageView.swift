@@ -7,52 +7,52 @@
 
 import SwiftUI
 
-struct MessageView: View {
+public struct MessageView: View {
 
     @Environment(\.chatTheme) var theme
 
     @ObservedObject var viewModel: ChatViewModel
 
-    let message: Message
-    let positionInUserGroup: PositionInUserGroup
-    let positionInMessagesSection: PositionInMessagesSection
-    let chatType: ChatType
-    let avatarSize: CGFloat
-    let tapAvatarClosure: ChatView.TapAvatarClosure?
-    let messageStyler: (String) -> AttributedString
-    let isDisplayingMessageMenu: Bool
-    let showMessageTimeView: Bool
-    let messageLinkPreviewLimit: Int
-    var font: UIFont
+    public let message: Message
+    public let positionInUserGroup: PositionInUserGroup
+    public let positionInMessagesSection: PositionInMessagesSection
+    public let chatType: ChatType
+    public let avatarSize: CGFloat
+    public let tapAvatarClosure: ChatView.TapAvatarClosure?
+    public let messageStyler: (String) -> AttributedString
+    public let isDisplayingMessageMenu: Bool
+    public let showMessageTimeView: Bool
+    public let messageLinkPreviewLimit: Int
+    public var font: UIFont
 
-    @State var avatarViewSize: CGSize = .zero
-    @State var statusSize: CGSize = .zero
-    @State var giphyAspectRatio: CGFloat = 1
-    @State var timeSize: CGSize = .zero
-    @State var messageSize: CGSize = .zero
+    @State public var avatarViewSize: CGSize = .zero
+    @State public var statusSize: CGSize = .zero
+    @State public var giphyAspectRatio: CGFloat = 1
+    @State public var timeSize: CGSize = .zero
+    @State public var messageSize: CGSize = .zero
     
     // The size of our reaction bubbles are based on the users font size,
     // Therefore we need to capture it's rendered size in order to place it correctly
     @State var bubbleSize: CGSize = .zero
     
-    static let widthWithMedia: CGFloat = 204
-    static let horizontalNoAvatarPadding: CGFloat = 8
-    static let horizontalAvatarPadding: CGFloat = 8
-    static let horizontalTextPadding: CGFloat = 12
-    static let horizontalAttachmentPadding: CGFloat = 1 // for multiple attachments
-    static let statusViewSize: CGFloat = 14
-    static let horizontalStatusPadding: CGFloat = 8
-    static let horizontalBubblePadding: CGFloat = 70
+    public static let widthWithMedia: CGFloat = 204
+    public static let horizontalNoAvatarPadding: CGFloat = 8
+    public static let horizontalAvatarPadding: CGFloat = 8
+    public static let horizontalTextPadding: CGFloat = 12
+    public static let horizontalAttachmentPadding: CGFloat = 1 // for multiple attachments
+    public static let statusViewSize: CGFloat = 14
+    public static let horizontalStatusPadding: CGFloat = 8
+    public static let horizontalBubblePadding: CGFloat = 70
 
-    enum DateArrangement {
+    public enum DateArrangement {
         case hstack, vstack, overlay
     }
 
-    var additionalMediaInset: CGFloat {
+    public var additionalMediaInset: CGFloat {
         message.attachments.count > 1 ? MessageView.horizontalAttachmentPadding * 2 : 0
     }
 
-    var dateArrangement: DateArrangement {
+    public var dateArrangement: DateArrangement {
         let timeWidth = timeSize.width + 10
         let textPaddings = MessageView.horizontalTextPadding * 2
         let widthWithoutMedia = UIScreen.main.bounds.width
@@ -80,24 +80,24 @@ struct MessageView: View {
         return .vstack
     }
 
-    var showAvatar: Bool {
+    public var showAvatar: Bool {
         isDisplayingMessageMenu
         || positionInUserGroup == .single
         || (chatType == .conversation && positionInUserGroup == .last)
         || (chatType == .comments && positionInUserGroup == .first)
     }
 
-    var topPadding: CGFloat {
+    public var topPadding: CGFloat {
         if chatType == .comments { return 0 }
         return positionInUserGroup.isTop && !positionInMessagesSection.isTop ? 8 : 4
     }
 
-    var bottomPadding: CGFloat {
+    public var bottomPadding: CGFloat {
         if chatType == .conversation { return 0 }
         return positionInUserGroup.isTop ? 8 : 4
     }
 
-    var body: some View {
+    public var body: some View {
         HStack(alignment: .bottom, spacing: 0) {
             if !message.user.isCurrentUser {
                 avatarView
