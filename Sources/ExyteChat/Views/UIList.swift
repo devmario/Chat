@@ -7,6 +7,35 @@
 
 import SwiftUI
 
+struct LoadingView: View {
+    @State private var timer: Timer?
+    
+    @State private var textIndex = 0
+    let texts = (0...8).map { "Thinking" + String(repeating: ".", count: $0) }
+    
+    var body: some View {
+        HStack {
+            ProgressView()
+            Text(texts[textIndex])
+                .onAppear {
+                    // 뷰가 나타날 때 타이머 시작
+                    self.timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+                        // 1초마다 textIndex 변경
+                        self.textIndex = (self.textIndex + 1) % self.texts.count
+                    }
+                }
+                .onDisappear {
+                    // 뷰가 사라질 때 타이머 중지
+                    self.timer?.invalidate()
+                }
+            Spacer()
+        }
+        .padding(.vertical, 20)
+        .padding(.horizontal, 55)
+        .transition(.scale)
+    }
+}
+
 public extension Notification.Name {
     static let onScrollToBottom = Notification.Name("onScrollToBottom")
 }
@@ -569,12 +598,8 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
             let row = sections[indexPath.section].rows[indexPath.row]
             tableViewCell.contentConfiguration = UIHostingConfiguration {
                 if row.message.isLoading {
-                    HStack {
-                        ProgressView()
-                        Spacer()
-                    }
-                    .transition(.scale)
-                    .rotationEffect(Angle(degrees: (type == .conversation ? 180 : 0)))
+                    LoadingView()
+                        .rotationEffect(Angle(degrees: (type == .conversation ? 180 : 0)))
                 } else {
                     ChatMessageView(
                         viewModel: viewModel, messageBuilder: messageBuilder, row: row, chatType: type,
