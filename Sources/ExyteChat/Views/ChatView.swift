@@ -136,13 +136,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     @StateObject private var keyboardState = KeyboardState()
     
     var changedIsScrolledToBottom:((Bool) -> Void)? = nil
-    @State private var isScrolledToBottom: Bool = true {
-        didSet {
-            if let changedIsScrolledToBottom = changedIsScrolledToBottom {
-                changedIsScrolledToBottom(isScrolledToBottom)
-            }
-        }
-    }
+    @State private var isScrolledToBottom: Bool = true
     @State private var shouldScrollToTop: () -> () = {}
 
     /// Used to prevent the MainView from responding to keyboard changes while the Menu is active
@@ -316,6 +310,10 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
 //                    .padding(8)
 //                    .padding(.bottom, emptySpaceAtBottom)
 //                }
+            }.onChange(of: isScrolledToBottom) { newValue in
+                if let changedIsScrolledToBottom = changedIsScrolledToBottom {
+                    changedIsScrolledToBottom(isScrolledToBottom)
+                }
             }
             
         case .comments:
