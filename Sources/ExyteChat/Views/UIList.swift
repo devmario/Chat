@@ -23,6 +23,8 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
     @Binding var isScrolledToBottom: Bool
     @Binding var shouldScrollToTop: () -> ()
     @Binding var tableContentHeight: CGFloat
+    
+    var emptySpaceAtBottom: CGFloat = 0
 
     var messageBuilder: MessageBuilderClosure?
     var mainHeaderBuilder: (()->AnyView)?
@@ -62,6 +64,8 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
         tableView.backgroundColor = UIColor(theme.colors.mainBG)
         tableView.scrollsToTop = false
         tableView.isScrollEnabled = isScrollEnabled
+        
+        tableView.contentInset = UIEdgeInsets(top: emptySpaceAtBottom, left: 0, bottom: 0, right: 0)
 
         NotificationCenter.default.addObserver(forName: .onScrollToBottom, object: nil, queue: nil) { _ in
             DispatchQueue.main.async {
@@ -363,7 +367,7 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
             viewModel: viewModel, inputViewModel: inputViewModel,
             isScrolledToBottom: $isScrolledToBottom, isScrolledToTop: $isScrolledToTop,
             messageBuilder: messageBuilder, mainHeaderBuilder: mainHeaderBuilder,
-            headerBuilder: headerBuilder, type: type, showDateHeaders: showDateHeaders,
+            headerBuilder: headerBuilder, emptySpaceAtBottom: emptySpaceAtBottom, type: type, showDateHeaders: showDateHeaders,
             avatarSize: avatarSize, showMessageMenuOnLongPress: showMessageMenuOnLongPress,
             tapAvatarClosure: tapAvatarClosure, paginationHandler: paginationHandler,
             messageStyler: messageStyler, showMessageTimeView: showMessageTimeView,
@@ -383,6 +387,7 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
         let messageBuilder: MessageBuilderClosure?
         let mainHeaderBuilder: (()->AnyView)?
         let headerBuilder: ((Date)->AnyView)?
+        var emptySpaceAtBottom: CGFloat
 
         let type: ChatType
         let showDateHeaders: Bool
@@ -411,7 +416,7 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
             viewModel: ChatViewModel, inputViewModel: InputViewModel,
             isScrolledToBottom: Binding<Bool>, isScrolledToTop: Binding<Bool>,
             messageBuilder: MessageBuilderClosure?, mainHeaderBuilder: (() -> AnyView)?,
-            headerBuilder: ((Date) -> AnyView)?, type: ChatType, showDateHeaders: Bool,
+            headerBuilder: ((Date) -> AnyView)?, emptySpaceAtBottom: CGFloat, type: ChatType, showDateHeaders: Bool,
             avatarSize: CGFloat, showMessageMenuOnLongPress: Bool,
             tapAvatarClosure: ChatView.TapAvatarClosure?, paginationHandler: PaginationHandler?,
             messageStyler: @escaping (String) -> AttributedString, showMessageTimeView: Bool,
@@ -419,6 +424,7 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
             ids: [String], mainBackgroundColor: Color, paginationTargetIndexPath: IndexPath? = nil,
             listSwipeActions: ListSwipeActions
         ) {
+            self.emptySpaceAtBottom = emptySpaceAtBottom
             self.viewModel = viewModel
             self.inputViewModel = inputViewModel
             self._isScrolledToBottom = isScrolledToBottom
@@ -461,14 +467,14 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
             }
             return nil
         }
-
+        
         func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
             if type == .conversation {
                 return sectionHeaderView(section)
             }
             return nil
         }
-
+        
         func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
             if !showDateHeaders && (section != 0 || mainHeaderBuilder == nil) {
                 return 0.1
@@ -482,7 +488,7 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
             }
             return type == .conversation ? UITableView.automaticDimension : 0.1
         }
-
+        
         func sectionHeaderView(_ section: Int) -> UIView? {
             if !showDateHeaders && (section != 0 || mainHeaderBuilder == nil) {
                 return nil

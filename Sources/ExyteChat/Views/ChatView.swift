@@ -76,6 +76,8 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     
     // MARK: - Parameters
     
+    var emptySpaceAtBottom: CGFloat = 0
+    
     let type: ChatType
     let sections: [MessagesSection]
     let ids: [String]
@@ -133,7 +135,12 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     @StateObject private var networkMonitor = NetworkMonitor()
     @StateObject private var keyboardState = KeyboardState()
     
-    @State private var isScrolledToBottom: Bool = true
+    var changedIsScrolledToBottom:((Bool) -> Void)? = nil
+    @State private var isScrolledToBottom: Bool = true {
+        didSet {
+            changedIsScrolledToBottom?(isScrolledToBottom)
+        }
+    }
     @State private var shouldScrollToTop: () -> () = {}
 
     /// Used to prevent the MainView from responding to keyboard changes while the Menu is active
@@ -305,6 +312,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
                             .shadow(color: .primary.opacity(0.1), radius: 2, y: 1)
                     }
                     .padding(8)
+                    .padding(.bottom, emptySpaceAtBottom)
                 }
             }
             
@@ -321,6 +329,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
             isScrolledToBottom: $isScrolledToBottom,
             shouldScrollToTop: $shouldScrollToTop,
             tableContentHeight: $tableContentHeight,
+            emptySpaceAtBottom: emptySpaceAtBottom,
             messageBuilder: messageBuilder,
             mainHeaderBuilder: mainHeaderBuilder,
             headerBuilder: headerBuilder,
@@ -630,6 +639,18 @@ public extension ChatView {
     func tapAvatarClosure(_ closure: @escaping TapAvatarClosure) -> ChatView {
         var view = self
         view.tapAvatarClosure = closure
+        return view
+    }
+    
+    func setEmptySpaceAtBottom(_ padding: CGFloat) -> ChatView {
+        var view = self
+        view.emptySpaceAtBottom = padding
+        return view
+    }
+    
+    func setChangedIsScrolledToBottom(_ closure: @escaping (Bool) -> Void) -> ChatView {
+        var view = self
+        view.changedIsScrolledToBottom = closure
         return view
     }
     
