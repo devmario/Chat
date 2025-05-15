@@ -24,13 +24,10 @@ struct ChatExampleView: View {
     var body: some View {
         ChatView(messages: viewModel.messages, chatType: .conversation) { draft in
             viewModel.send(draft: draft)
+        } inputViewBuilder: { textBinding, attachments, inputViewState, inputViewStyle, inputViewActionClosure, dismissKeyboardClosure in
+            EmptyView()
         }
         .setEmptySpaceAtBottom(100)
-        .enableLoadMore(pageSize: 3) { message in
-            await MainActor.run {
-                viewModel.loadMoreMessage(before: message)
-            }
-        }
         .messageUseMarkdown(true)
         .setRecorderSettings(recorderSettings)
         .messageReactionDelegate(viewModel)

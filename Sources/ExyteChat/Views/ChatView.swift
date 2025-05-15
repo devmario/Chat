@@ -138,7 +138,9 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     var changedIsScrolledToBottom:((Bool) -> Void)? = nil
     @State private var isScrolledToBottom: Bool = true {
         didSet {
-            changedIsScrolledToBottom?(isScrolledToBottom)
+            if let changedIsScrolledToBottom = changedIsScrolledToBottom {
+                changedIsScrolledToBottom(isScrolledToBottom)
+            }
         }
     }
     @State private var shouldScrollToTop: () -> () = {}
