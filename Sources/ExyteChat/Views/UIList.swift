@@ -569,7 +569,9 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
             let row = sections[indexPath.section].rows[indexPath.row]
             tableViewCell.contentConfiguration = UIHostingConfiguration {
                 if row.message.isLoading {
-                    Circle()
+                    HStack {
+                        Text("load")
+                    }
                 } else {
                     ChatMessageView(
                         viewModel: viewModel, messageBuilder: messageBuilder, row: row, chatType: type,
