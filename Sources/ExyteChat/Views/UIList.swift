@@ -570,8 +570,11 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
             tableViewCell.contentConfiguration = UIHostingConfiguration {
                 if row.message.isLoading {
                     HStack {
-                        Text("load")
+                        ProgressView()
+                        Spacer()
                     }
+                    .transition(.scale)
+                    .rotationEffect(Angle(degrees: (type == .conversation ? 180 : 0)))
                 } else {
                     ChatMessageView(
                         viewModel: viewModel, messageBuilder: messageBuilder, row: row, chatType: type,
