@@ -39,9 +39,9 @@ enum Action: MessageMenuAction {
     
     static func menuItems(for message: ExyteChat.Message) -> [Action] {
         if message.user.isCurrentUser  {
-            return [.edit]
+            return []
         } else {
-            return [.reply]
+            return []
         }
     }
 }
