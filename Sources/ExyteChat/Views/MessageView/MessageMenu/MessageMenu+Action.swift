@@ -63,9 +63,9 @@ public enum DefaultMessageMenuAction: MessageMenuAction, Sendable {
     
     static public func menuItems(for message: Message) -> [DefaultMessageMenuAction] {
         if message.user.isCurrentUser {
-            return allCases
+            return [.copy]
         } else {
-            return [.copy, .reply]
+            return [.copy]
         }
     }
 }
